@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+ConfigureServices(builder.Services, builder.Configuration);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -25,3 +25,14 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+{
+    services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = configuration.GetSection("RedisConnection").GetValue<string>("ConnectionString");
+        options.InstanceName = configuration.GetSection("RedisConnection").GetValue<string>("InstanceName");
+    });
+}
